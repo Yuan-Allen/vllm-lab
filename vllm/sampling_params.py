@@ -114,6 +114,7 @@ class SamplingParams:
         skip_special_tokens: bool = True,
         spaces_between_special_tokens: bool = True,
         logits_processors: Optional[List[LogitsProcessor]] = None,
+        priority: Optional[float] = None,
     ) -> None:
         self.n = n
         self.best_of = best_of if best_of is not None else n
@@ -145,6 +146,7 @@ class SamplingParams:
         self.spaces_between_special_tokens = spaces_between_special_tokens
         self.logits_processors = logits_processors
         self.include_stop_str_in_output = include_stop_str_in_output
+        self.priority = priority
         self._verify_args()
         if self.use_beam_search:
             self._verify_beam_search()
