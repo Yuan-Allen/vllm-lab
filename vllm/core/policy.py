@@ -34,12 +34,24 @@ class FCFS(Policy):
         seq_group: SequenceGroup,
     ) -> float:
         return now - seq_group.arrival_time
+    
+class STATIC(Policy):
+
+    def get_priority(
+        self,
+        now: float,
+        seq_group: SequenceGroup,
+    ) -> float:
+        if seq_group.sampling_params.priority is None:
+            return float('-inf')
+        return seq_group.sampling_params.priority
 
 
 class PolicyFactory:
 
     _POLICY_REGISTRY = {
         'fcfs': FCFS,
+        'STATIC': STATIC,
     }
 
     @classmethod
