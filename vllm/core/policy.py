@@ -45,13 +45,23 @@ class STATIC(Policy):
         if seq_group.sampling_params.priority is None:
             return float('-inf')
         return seq_group.sampling_params.priority
+    
+class SJF(Policy):
+
+    def get_priority(
+        self,
+        now: float,
+        seq_group: SequenceGroup,
+    ) -> float:
+        return -seq_group.sampling_params.max_tokens
 
 
 class PolicyFactory:
 
     _POLICY_REGISTRY = {
         'fcfs': FCFS,
-        'STATIC': STATIC,
+        'static': STATIC,
+        'sjf': SJF,
     }
 
     @classmethod
