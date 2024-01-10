@@ -54,6 +54,28 @@ class SJF(Policy):
         seq_group: SequenceGroup,
     ) -> float:
         return -seq_group.sampling_params.max_tokens
+    
+# Large Data First
+class LDF(Policy):
+    
+        def get_priority(
+            self,
+            now: float,
+            seq_group: SequenceGroup,
+        ) -> float:
+            data_size = 0
+            for _, seq in seq_group.seqs_dict.items():
+                data_size += len(seq.data.prompt_token_ids) + len(seq.data.output_token_ids)
+            return data_size
+        
+class LCFS(Policy):
+
+    def get_priority(
+        self,
+        now: float,
+        seq_group: SequenceGroup,
+    ) -> float:
+        return seq_group.arrival_time - now
 
 
 class PolicyFactory:
@@ -62,6 +84,8 @@ class PolicyFactory:
         'fcfs': FCFS,
         'static': STATIC,
         'sjf': SJF,
+        'ldf': LDF,
+        'lcfs': LCFS,
     }
 
     @classmethod
