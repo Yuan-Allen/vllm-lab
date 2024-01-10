@@ -68,11 +68,11 @@ class Scheduler:
                                 self.scheduler_config.max_num_batched_tokens)
 
         # Instantiate the scheduling policy.
-        # self.policy = PolicyFactory.get_policy(policy_name="fcfs")
+        self.policy = PolicyFactory.get_policy(policy_name="fcfs")
         # self.policy = PolicyFactory.get_policy(policy_name="static")
         # self.policy = PolicyFactory.get_policy(policy_name="sjf")
         # self.policy = PolicyFactory.get_policy(policy_name="ldf")
-        self.policy = PolicyFactory.get_policy(policy_name="lcfs")
+        # self.policy = PolicyFactory.get_policy(policy_name="lcfs")
         logger.info(f"Using {self.policy.__class__.__name__} policy.")
         # Create the block space manager.
         self.block_manager = BlockSpaceManager(
@@ -141,6 +141,8 @@ class Scheduler:
             # Optimization: We do not sort the waiting queue since the preempted
             # sequence groups are added to the front and the new sequence groups
             # are added to the back.
+            if self.policy.__class__.__name__ != "FCFS":
+                self.waiting = self.policy.sort_by_priority(now, self.waiting)
             while self.waiting:
                 seq_group = self.waiting[0]
 
