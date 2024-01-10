@@ -69,7 +69,8 @@ class Scheduler:
 
         # Instantiate the scheduling policy.
         self.policy = PolicyFactory.get_policy(policy_name="fcfs")
-        # self.policy = PolicyFactory.get_policy(policy_name="STATIC")
+        # self.policy = PolicyFactory.get_policy(policy_name="static")
+        # self.policy = PolicyFactory.get_policy(policy_name="sjf")
         logger.info(f"Using {self.policy.__class__.__name__} policy.")
         # Create the block space manager.
         self.block_manager = BlockSpaceManager(
