@@ -41,35 +41,13 @@ def sample_requests(
     num_requests: int,
     tokenizer: PreTrainedTokenizerBase,
 ) -> List[Tuple[str, int, int]]:
-    # # Load the dataset.
-    # with open(dataset_path) as f:
-    #     dataset = json.load(f)
-    # # Filter out the conversations with less than 2 turns.
-    # dataset = [
-    #     data for data in dataset
-    #     if len(data["conversations"]) >= 2
-    # ]
-    # # Only keep the first two turns of each conversation.
-    # dataset = [
-    #     (data["conversations"][0]["value"], data["conversations"][1]["value"])
-    #     for data in dataset
-    # ]
-
-    # Tokenize the prompts and completions.
-    # prompts = [prompt for prompt, _ in dataset]
-    # prompt_token_ids = tokenizer(prompts).input_ids
-    # completions = [completion for _, completion in dataset]
-    # completion_token_ids = tokenizer(completions).input_ids
     tokenized_dataset = []
     for i in range(2 * num_requests):
-        # output_len = len(completion_token_ids[i])
-        # tokenized_dataset.append((prompts[i], prompt_token_ids[i], output_len))
         request = generate_a_string(np.random.poisson(request_length))
         request_token_ids = tokenizer(request).input_ids
         output_len = np.random.poisson(request_length)
         tokenized_dataset.append((request, request_token_ids, output_len))
 
-    # Filter out too long sequences.
     filtered_dataset: List[Tuple[str, int, int]] = []
     for prompt, prompt_token_ids, output_len in tokenized_dataset:
         prompt_len = len(prompt_token_ids)
@@ -202,7 +180,7 @@ def main(args: argparse.Namespace):
     avg_latency = np.mean([latency for _, _, latency in REQUEST_LATENCY])
     print(f"Average latency: {avg_latency:.2f} s")
 
-    print("---------------------output length = 100---------------------------------")
+    print("------------------------------------------------------")
     avg_per_token_latency = np.mean([
         latency / (prompt_len + output_len)
         for prompt_len, output_len, latency in REQUEST_LATENCY
@@ -220,7 +198,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Benchmark the online serving throughput.")
     parser.add_argument("--backend", type=str, default="vllm",
-                        choices=["vllm", "tgi"])
+                        choices=["vllm"])
     parser.add_argument("--host", type=str, default="localhost")
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--dataset", type=int,  default=30,
