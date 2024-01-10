@@ -6,9 +6,6 @@ On the server side, run one of the following commands:
         --model <your_model> --swap-space 16 \
         --disable-log-requests
 
-    (TGI backend)
-    ./launch_hf_server.sh <your_model>
-
 On the client side, run:
     python benchmarks/benchmark_serving.py \
         --backend <backend> \
@@ -53,8 +50,6 @@ def sample_requests(
         prompt_len = len(prompt_token_ids)
         if prompt_len < 4 or output_len < 4:
             # Prune too short sequences.
-            # This is because TGI causes errors when the input or output length
-            # is too short.
             continue
         if prompt_len > 1024 or prompt_len + output_len > 2048:
             # Prune too long sequences.
@@ -106,17 +101,6 @@ async def send_request(
             "max_tokens": output_len,
             "ignore_eos": True,
             "stream": False,
-        }
-    elif backend == "tgi":
-        assert not use_beam_search
-        params = {
-            "best_of": best_of,
-            "max_new_tokens": output_len,
-            "do_sample": True,
-        }
-        pload = {
-            "inputs": prompt,
-            "parameters": params,
         }
     else:
         raise ValueError(f"Unknown backend: {backend}")
